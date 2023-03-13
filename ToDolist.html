@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sono:wght@200&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background-color: rgb(30, 0, 77);
+            font-family: 'Sono', sans-serif;
+        }
+        
+        .task {
+            display: flex;
+            background-color: white;
+            padding: 4px;
+            border-bottom: solid black 1px;
+            transition: box-shadow 0.2s;
+        }
+        
+        .done {
+            background-color: rgb(158, 253, 160);
+        }
+        
+        .task:hover {
+            box-shadow: 0px 3px 15px rgba(97, 97, 97, 0.843);
+        }
+        
+        .tasks-table {
+            background: rgb(239, 239, 239);
+            width: 60%;
+            margin-top: 130px;
+        }
+        
+        button {
+            border: none;
+            font-size: 20px;
+            box-shadow: 0px 3px 5px rgba(168, 168, 168, 0.38);
+        }
+        
+        button.circular {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            line-height: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="direction: rtl;">
+        <!-- CENTER DIV -->
+        <div style="display: flex; justify-content: center; align-items: center">
+
+            <!-- TASKS TABLE -->
+            <div class="tasks-table">
+
+                <!-- HEADER -->
+                <div style="width:100%; text-align: center; background: rgb(92, 52, 155); color: white; padding-top: 8px; padding-bottom: 8px">
+                    <h1 style="display: inline">My ToDolist</h1>
+
+                    <button id="add-btn" class="circular" style="float: right; background: white; margin-right: 10px">
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+                    </button>
+                </div>
+                <!--// HEADER //-->
+
+                <!-- TASKS -->
+                <div id="tasks" style="padding: 20px;">
+
+
+
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+</body>
+
+
+<script>
+    let tasks = [{
+        "title": "HTML",
+        "date": "15.10.2030",
+        "isDone": false
+    }, {
+        "title": "JavaScript",
+        "date": "15.10.2030",
+        "isDone": false
+    }, {
+        "title": "JavaScript",
+        "date": "15.10.2030",
+        "isDone": false
+    }, {
+        "title": "JavaScript",
+        "date": "15.10.2030",
+        "isDone": false
+    }, {
+        "title": "JavaScript",
+        "date": "15.10.2030",
+        "isDone": false
+    }, {
+        "title": "JavaScript",
+        "date": "15.10.2030",
+        "isDone": false
+    }]
+
+
+
+    function getTasksFromStorage() {
+        let retrievedTasks = JSON.parse(localStorage.getItem("tasks"))
+
+
+
+
+        if (retrievedTasks == null) {
+            tasks = []
+
+        } else {
+            tasks = retrievedTasks
+        }
+    }
+
+    getTasksFromStorage()
+
+
+
+
+    function fillTasksOnThePage() {
+
+
+        document.getElementById("tasks").innerHTML = ""
+
+        let index = 0
+        for (task of tasks) {
+
+            let content =
+                `
+                <div class="task ${task.isDone ? 'done' : ''} ">
+
+                    <!-- TASKS INFO -->
+                    <div style="width: 70%;">
+                        <h2>${task.title}</h2>
+
+                        <div>
+                            <span class="material-symbols-outlined">
+                                calendar_month
+                            </span>
+                            <span>
+                                ${task.date}
+                            </span>
+                        </div>
+                    </div>
+                    <!--// TASKS INFO //-->
+
+                    <!-- TASKS ACTIONS -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 20%;">
+                        <button onclick="deleteTask(${index})" class="circular" style="background-color: rgb(114, 0, 0); color: white">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </button>
+
+                        ${task.isDone ? `
+                            <button onclick="toggleTaskCompletion(${index})" class="circular" style="background-color: rgb(118, 0, 101); color: white">
+                                <span class="material-symbols-outlined">
+                                    cancel
+                                </span>
+                            </button>
+                            ` : `
+                            <button onclick="toggleTaskCompletion(${index})" class="circular" style="background-color: rgb(0, 150, 30); color: white">
+                                <span class="material-symbols-outlined">
+                                    done
+                                </span>
+                            </button>
+                        `}
+                        
+
+                        <button onclick="editTask(${index})" class="circular" style="background-color: rgba(0, 16, 197, 0.692); color: white">
+                            <span class="material-symbols-outlined">
+                                edit
+                            </span>
+                        </button>
+                    </div>
+                    <!--// TASKS ACTIONS //-->
+
+                </div>
+            `
+            document.getElementById("tasks").innerHTML += content
+            index++
+
+            
+        
+        }
+    }
+
+    fillTasksOnThePage()
+
+    document.getElementById("add-btn").addEventListener("click", function(){
+        let now = new Date()
+        let date = now.getDate() + "." + (now.getMonth()+1) + "." + now.getFullYear() + " | " + now.getHours() + ":" + now.getMinutes()
+        let taskName = prompt("Add_Task")
+        
+        
+        let taskObj = {
+            "title" : taskName,
+            "date": date,
+            "isDone": false
+        }
+        storeTasks()
+        tasks.push(taskObj)
+        fillTasksOnThePage()
+        
+    })
+
+
+    function deleteTask(index){
+        let task = tasks[index]
+        console.log(task)
+        let isConfirmed = confirm("Are You Sure To Delete:" + task.title)
+
+        if (isConfirmed){
+            tasks.splice(index, 1)
+            storeTasks()
+            fillTasksOnThePage()
+        }
+        
+    }
+
+    function editTask(index){
+        let task = tasks[index]
+        let newTaskTitle = prompt("Edit_Task", task.title)
+        
+        task.title = newTaskTitle
+        storeTasks()
+        fillTasksOnThePage()
+    }
+
+    function toggleTaskCompletion(index){
+        let task = tasks[index]
+        task.isDone = !task.isDone
+        storeTasks()
+        fillTasksOnThePage()
+    }
+
+    function storeTasks(){
+        let tasksString = JSON.stringify(tasks)
+        localStorage.setItem("tasks", tasksString)
+    }
+</script>
+
+</html>
